@@ -1,3 +1,10 @@
+---
+title: ripgrep
+date: 2026-04-28 21:00:00
+tags: [ripgrep, grep]
+index_img: /img/example.jpg # 可以以后再加图片路径
+---
+
 ## 1. rg 是什么
 `rg` 是 `ripgrep` 的命令行搜索工具，主要用于在代码工程中快速搜索文本、函数名、变量名、配置项、报错信息等。
 
