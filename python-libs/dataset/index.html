@@ -19,17 +19,20 @@
   <meta name="author" content="John Doe">
   <meta name="keywords" content="">
   
-    <meta property="og:type" content="website">
-<meta property="og:title" content="标签">
-<meta property="og:url" content="http://example.com/tags/index.html">
+    <meta name="description" content="← 返回索引  datasetROS 图像数据采集工具的 Python 包。安装后可用 dataset 命令直接启动采集。 依赖 Python &gt;&#x3D; 3.8 opencv-python numpy ROS 环境（提供 rospy、sensor_msgs、cv_bridge）  安装建议在已 source ROS 环境后安装： uv venv uv pip install -e &#x2F;h">
+<meta property="og:type" content="website">
+<meta property="og:title" content="dataset 使用文档">
+<meta property="og:url" content="http://example.com/python-libs/dataset/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="← 返回索引  datasetROS 图像数据采集工具的 Python 包。安装后可用 dataset 命令直接启动采集。 依赖 Python &gt;&#x3D; 3.8 opencv-python numpy ROS 环境（提供 rospy、sensor_msgs、cv_bridge）  安装建议在已 source ROS 环境后安装： uv venv uv pip install -e &#x2F;h">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-28T13:10:12.849Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>标签 - Hexo</title>
+  <title>dataset 使用文档 - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -83,7 +86,7 @@
   <header>
     
 
-<div class="header-inner" style="height: 80vh;">
+<div class="header-inner" style="height: 60vh;">
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
@@ -213,17 +216,13 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="标签"></span>
+            <span id="subtitle" data-typed-text="dataset 使用文档"></span>
           
         </div>
 
         
       </div>
 
-      
-        <div class="scroll-down-bar">
-          <i class="iconfont icon-arrowdown"></i>
-        </div>
       
     </div>
   </div>
@@ -244,9 +243,62 @@
               <div class="col-12 col-md-10 m-auto">
                 
 
-<div class="text-center tagcloud">
-  <a href="/tags/Perf/" style="font-size: 15px; color: #bbe">Perf</a> <a href="/tags/Robotics/" style="font-size: 15px; color: #bbe">Robotics</a> <a href="/tags/WSL2/" style="font-size: 15px; color: #bbe">WSL2</a> <a href="/tags/grep/" style="font-size: 15px; color: #bbe">grep</a> <a href="/tags/ripgrep/" style="font-size: 15px; color: #bbe">ripgrep</a>
-</div>
+<article class="page-content">
+  <p><a href="../">← 返回索引</a></p>
+
+<h1 id="dataset"><a href="#dataset" class="headerlink" title="dataset"></a>dataset</h1><p>ROS 图像数据采集工具的 Python 包。安装后可用 <code>dataset</code> 命令直接启动采集。</p>
+<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><ul>
+<li>Python &gt;&#x3D; 3.8</li>
+<li><code>opencv-python</code></li>
+<li><code>numpy</code></li>
+<li>ROS 环境（提供 <code>rospy</code>、<code>sensor_msgs</code>、<code>cv_bridge</code>）</li>
+</ul>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>建议在已 <code>source</code> ROS 环境后安装：</p>
+<pre><code class="language-bash">uv venv
+uv pip install -e /home/ww/test/scripts/dateset
+</code></pre>
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><pre><code class="language-bash">dataset /camera/image_raw 10 ./images
+</code></pre>
+<p>或使用配置文件：</p>
+<pre><code class="language-bash">dataset --config config.toml
+</code></pre>
+<p>参数说明：</p>
+<ul>
+<li><code>topic</code>：ROS 图像话题名称</li>
+<li><code>interval</code>：采集间隔帧数（每隔多少帧保存一张图片）</li>
+<li><code>save_dir</code>：图片保存目录</li>
+<li><code>-f, --format</code>：图片格式（jpg&#x2F;png），默认 jpg</li>
+<li><code>-p, --prefix</code>：图片文件名前缀，默认 img</li>
+<li><code>-q, --quality</code>：图片质量（1-100），默认 95</li>
+</ul>
+<h2 id="直接用-Python-运行"><a href="#直接用-Python-运行" class="headerlink" title="直接用 Python 运行"></a>直接用 Python 运行</h2><pre><code class="language-bash">python /home/ww/test/scripts/dateset/dataset.py /camera/image_raw 10 ./images
+</code></pre>
+<h2 id="配置文件示例"><a href="#配置文件示例" class="headerlink" title="配置文件示例"></a>配置文件示例</h2><pre><code class="language-toml">[collector]
+topic = &quot;/camera/image_raw&quot;
+interval = 10
+save_dir = &quot;./images&quot;
+format = &quot;jpg&quot;
+prefix = &quot;img&quot;
+quality = 95
+</code></pre>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><ul>
+<li>如果提示 <code>rospy 未安装或 ROS 环境未加载</code>，请先 <code>source</code> ROS setup（例如 <code>source /opt/ros/noetic/setup.bash</code>）。</li>
+</ul>
+
+
+  
+  
+  
+    <article id="comments" lazyload>
+      
+
+    </article>
+  
+
+
+</article>
+
+
 
               </div>
             </div>
