@@ -19,12 +19,12 @@
   <meta name="author" content="John Doe">
   <meta name="keywords" content="">
   
-    <meta name="description" content="← 返回索引  datasetROS 图像数据采集工具的 Python 包。安装后可用 dataset 命令直接启动采集。 依赖 Python &gt;&#x3D; 3.8 opencv-python numpy ROS 环境（提供 rospy、sensor_msgs、cv_bridge）  安装建议在已 source ROS 环境后安装： uv venv uv pip install -e &#x2F;h">
+    <meta name="description" content="← 返回索引  fov-filter基于 ROS1 的 PointCloud2 FOV 过滤器。它直接读取 bag 包中的点云话题，按多个水平&#x2F;垂直 FOV 区域以及距离范围做实时过滤，并把结果发布到 ROS 话题。 这个包自带 bag 播放控制，不依赖 rosbag play，因此支持：  暂停 &#x2F; 继续 单步前进 &#x2F; 单步后退 动态新增、更新、删除 FOV 区域">
 <meta property="og:type" content="website">
-<meta property="og:title" content="dataset 使用文档">
-<meta property="og:url" content="http://example.com/python-libs/dataset/index.html">
+<meta property="og:title" content="fov_filter 使用文档">
+<meta property="og:url" content="http://example.com/python-libs/fov_filter/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="← 返回索引  datasetROS 图像数据采集工具的 Python 包。安装后可用 dataset 命令直接启动采集。 依赖 Python &gt;&#x3D; 3.8 opencv-python numpy ROS 环境（提供 rospy、sensor_msgs、cv_bridge）  安装建议在已 source ROS 环境后安装： uv venv uv pip install -e &#x2F;h">
+<meta property="og:description" content="← 返回索引  fov-filter基于 ROS1 的 PointCloud2 FOV 过滤器。它直接读取 bag 包中的点云话题，按多个水平&#x2F;垂直 FOV 区域以及距离范围做实时过滤，并把结果发布到 ROS 话题。 这个包自带 bag 播放控制，不依赖 rosbag play，因此支持：  暂停 &#x2F; 继续 单步前进 &#x2F; 单步后退 动态新增、更新、删除 FOV 区域">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-05-14T12:42:21.389Z">
 <meta property="article:author" content="John Doe">
@@ -32,7 +32,7 @@
   
   
   
-  <title>dataset 使用文档 - Hexo</title>
+  <title>fov_filter 使用文档 - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -216,7 +216,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="dataset 使用文档"></span>
+            <span id="subtitle" data-typed-text="fov_filter 使用文档"></span>
           
         </div>
 
@@ -246,44 +246,131 @@
 <article class="page-content">
   <p><a href="../">← 返回索引</a></p>
 
-<h1 id="dataset"><a href="#dataset" class="headerlink" title="dataset"></a>dataset</h1><p>ROS 图像数据采集工具的 Python 包。安装后可用 <code>dataset</code> 命令直接启动采集。</p>
+<h1 id="fov-filter"><a href="#fov-filter" class="headerlink" title="fov-filter"></a>fov-filter</h1><p>基于 ROS1 的 PointCloud2 FOV 过滤器。它直接读取 bag 包中的点云话题，按多个水平&#x2F;垂直 FOV 区域以及距离范围做实时过滤，并把结果发布到 ROS 话题。</p>
+<p>这个包自带 bag 播放控制，不依赖 <code>rosbag play</code>，因此支持：</p>
+<ul>
+<li>暂停 &#x2F; 继续</li>
+<li>单步前进 &#x2F; 单步后退</li>
+<li>动态新增、更新、删除 FOV 区域</li>
+<li>参数变化后立即对当前帧重新过滤并重发</li>
+<li>可选把被过滤掉的点云标成红色单独可视化</li>
+</ul>
 <h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><ul>
 <li>Python &gt;&#x3D; 3.8</li>
-<li><code>opencv-python</code></li>
 <li><code>numpy</code></li>
-<li>ROS 环境（提供 <code>rospy</code>、<code>sensor_msgs</code>、<code>cv_bridge</code>）</li>
+<li><code>PyYAML</code></li>
+<li>ROS1 环境（提供 <code>rospy</code>、<code>rosbag</code>、<code>sensor_msgs</code>、<code>std_msgs</code>、<code>rosgraph_msgs</code>）</li>
 </ul>
 <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>建议在已 <code>source</code> ROS 环境后安装：</p>
-<pre><code class="language-bash">uv venv
-uv pip install -e /home/ww/test/scripts/dateset
+<pre><code class="language-bash">cd /home/ww/test/scripts/fov_filter
+uv venv --python &quot;$(which python3)&quot; --system-site-packages
+source .venv_ros/bin/activate
+source /opt/ros/noetic/setup.bash
+uv pip install -e .
 </code></pre>
-<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><pre><code class="language-bash">dataset /camera/image_raw 10 ./images
+<p>如果你的 <code>python3</code> 来自 conda 或其它自定义环境，这种方式会把当前 Python 环境里的 ROS 相关运行时依赖一并复用进去，通常比裸 <code>uv venv</code> 更稳。</p>
+<p>构建 wheel：</p>
+<pre><code class="language-bash">uv build --wheel
 </code></pre>
-<p>或使用配置文件：</p>
-<pre><code class="language-bash">dataset --config config.toml
+<p>从 wheel 安装：</p>
+<pre><code class="language-bash">uv pip install dist/fov_filter-0.1.0-py3-none-any.whl
 </code></pre>
-<p>参数说明：</p>
+<p>构建结果在 <code>dist/</code> 下，安装后可直接使用三个命令：</p>
 <ul>
-<li><code>topic</code>：ROS 图像话题名称</li>
-<li><code>interval</code>：采集间隔帧数（每隔多少帧保存一张图片）</li>
-<li><code>save_dir</code>：图片保存目录</li>
-<li><code>-f, --format</code>：图片格式（jpg&#x2F;png），默认 jpg</li>
-<li><code>-p, --prefix</code>：图片文件名前缀，默认 img</li>
-<li><code>-q, --quality</code>：图片质量（1-100），默认 95</li>
+<li><code>fov-filter</code></li>
+<li><code>fov-filter-ctl</code></li>
+<li><code>fov-filter-ui</code></li>
 </ul>
-<h2 id="直接用-Python-运行"><a href="#直接用-Python-运行" class="headerlink" title="直接用 Python 运行"></a>直接用 Python 运行</h2><pre><code class="language-bash">python /home/ww/test/scripts/dateset/dataset.py /camera/image_raw 10 ./images
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><pre><code class="language-bash">source /opt/ros/noetic/setup.bash
+roscore
 </code></pre>
-<h2 id="配置文件示例"><a href="#配置文件示例" class="headerlink" title="配置文件示例"></a>配置文件示例</h2><pre><code class="language-toml">[collector]
-topic = &quot;/camera/image_raw&quot;
-interval = 10
-save_dir = &quot;./images&quot;
-format = &quot;jpg&quot;
-prefix = &quot;img&quot;
-quality = 95
+<p>另开终端运行：</p>
+<pre><code class="language-bash">source /opt/ros/noetic/setup.bash
+fov-filter \
+  --bag /home/ww/bags/ren/go7.bag \
+  --topic /mfla/frame_cloud \
+  --paint-rejected \
+  --region front:-45:45:-15:20 \
+  --region side_left:45:110:-20:25
 </code></pre>
-<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><ul>
-<li>如果提示 <code>rospy 未安装或 ROS 环境未加载</code>，请先 <code>source</code> ROS setup（例如 <code>source /opt/ros/noetic/setup.bash</code>）。</li>
+<p>默认发布的话题：</p>
+<ul>
+<li><code>/fov_filter/cloud</code>：过滤后保留的点云</li>
+<li><code>/fov_filter/rejected</code>：被过滤掉的点云</li>
+<li><code>/fov_filter/visualized</code>：可选的彩色可视化点云，过滤掉的点为红色</li>
+<li><code>/fov_filter/state</code>：当前播放与区域状态，JSON 字符串</li>
+<li><code>/fov_filter/command</code>：控制命令输入，JSON 字符串</li>
 </ul>
+<h2 id="动态控制"><a href="#动态控制" class="headerlink" title="动态控制"></a>动态控制</h2><p>如果你不想手动敲命令，直接开桌面滑块面板：</p>
+<pre><code class="language-bash">fov-filter-ui
+</code></pre>
+<p>建议的使用方式：</p>
+<ol>
+<li>先启动 <code>fov-filter</code></li>
+<li>再启动 <code>fov-filter-ui</code></li>
+<li>在 UI 里拖动帧滑块，并结合区域数值输入做精调</li>
+</ol>
+<p>UI 提供：</p>
+<ul>
+<li>播放 &#x2F; 暂停 &#x2F; 前进一帧 &#x2F; 后退一帧</li>
+<li>bag 帧位置滑块</li>
+<li>播放倍率步进输入器</li>
+<li>区域列表</li>
+<li>水平 &#x2F; 垂直角 &#x2F; 距离的滑块 + 手动输入</li>
+<li>动态新增 &#x2F; 删除区域</li>
+<li><code>paint_rejected</code>、<code>publish_rejected</code>、<code>loop</code> 开关</li>
+<li>配置文件加载 &#x2F; 导出按钮</li>
+<li>橙红主按钮 + 暖色滑块的统一配色</li>
+</ul>
+<p>暂停：</p>
+<pre><code class="language-bash">fov-filter-ctl pause
+</code></pre>
+<p>继续播放：</p>
+<pre><code class="language-bash">fov-filter-ctl play
+</code></pre>
+<p>单步前进和后退：</p>
+<pre><code class="language-bash">fov-filter-ctl next
+fov-filter-ctl prev
+</code></pre>
+<p>动态新增区域：</p>
+<pre><code class="language-bash">fov-filter-ctl add \
+  --name center \
+  --h-min -30 --h-max 30 \
+  --v-min -10 --v-max 15 \
+  --d-min 0.0 --d-max 1.6
+</code></pre>
+<p>更新区域：</p>
+<pre><code class="language-bash">fov-filter-ctl update \
+  --name center \
+  --h-min -20 --h-max 20 \
+  --v-min -8 --v-max 12 \
+  --d-min 0.0 --d-max 1.2
+</code></pre>
+<p>删除区域：</p>
+<pre><code class="language-bash">fov-filter-ctl remove --name center
+</code></pre>
+<p>查看当前状态：</p>
+<pre><code class="language-bash">fov-filter-ctl status
+</code></pre>
+<p>从 TOML&#x2F;YAML 重新加载配置：</p>
+<pre><code class="language-bash">fov-filter-ctl load-config /home/ww/test/scripts/fov_filter/config.example.toml
+</code></pre>
+<p>导出当前启用区域为 <code>filter_regions</code> YAML：</p>
+<pre><code class="language-bash">fov-filter-ctl export-config ./filter_regions.yaml
+</code></pre>
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><p>可使用 <code>--config</code> 指定 TOML&#x2F;YAML 文件。示例 TOML 见 <a href="/home/ww/test/scripts/fov_filter/config.example.toml">config.example.toml</a>。UI 和 <code>fov-filter-ctl export-config</code> 导出的 YAML 顶层为 <code>filter_regions:</code>。</p>
+<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
+<li><code>--bag</code>：bag 文件路径</li>
+<li><code>--topic</code>：需要读取的 PointCloud2 话题</li>
+<li><code>--region</code>：启动时添加的区域，格式 <code>name:hmin:hmax:vmin:vmax[:enabled][:dmin:dmax]</code></li>
+<li><code>--rate</code>：播放倍率，默认 <code>1.0</code></li>
+<li><code>--start-paused</code>：启动后先暂停</li>
+<li><code>--loop</code>：播到末尾后循环</li>
+<li><code>--paint-rejected</code>：发布彩色可视化点云并将过滤点标红</li>
+<li><code>--publish-clock</code>：同步发布 <code>/clock</code></li>
+</ul>
+<p>水平角定义为 <code>atan2(y, x)</code>，内部按 <code>[0, 360)</code> 归一化比较，因此同时支持 <code>-45..45</code> 和 <code>315..45</code> 这两种写法。垂直角定义为 <code>atan2(z, hypot(x, y))</code>，范围 <code>[-90, 90]</code> 度。距离使用三维欧氏距离，单位米，当前默认编辑范围为 <code>0~2m</code>。</p>
+<p>若未配置任何启用中的区域，则默认不过滤，直接保留所有有效点。</p>
 
 
   
