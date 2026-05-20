@@ -1,8 +1,9 @@
 ---
 title: ripgrep
 date: 2026-04-28 21:00:00
+author: wei wang
 tags: [ripgrep, grep]
-index_img: /img/example.jpg # 可以以后再加图片路径
+index_img: /img/RG.png
 ---
 
 ## 1. rg 是什么
