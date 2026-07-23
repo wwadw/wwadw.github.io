@@ -8,6 +8,7 @@ const root = path.join(__dirname, "..", "source", "kalman-playground");
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
 const js = fs.readFileSync(path.join(root, "app.js"), "utf8");
+const generatedPath = path.join(__dirname, "..", "public", "kalman-playground", "index.html");
 
 for (const required of [
   "app-shell",
@@ -30,6 +31,19 @@ for (const required of [
 ]) {
   if (!css.includes(required)) {
     throw new Error(`styles.css missing full-screen lab marker: ${required}`);
+  }
+}
+
+if (fs.existsSync(generatedPath)) {
+  const generated = fs.readFileSync(generatedPath, "utf8");
+  const normalized = generated.trimStart().toLowerCase();
+  if (!normalized.startsWith("<!doctype html>")) {
+    throw new Error("generated playground page must start with the standalone <!doctype html>");
+  }
+  for (const forbidden of ["<strong>Fluid</strong>", "id=\"navbar\"", "hexo-theme-fluid"]) {
+    if (generated.includes(forbidden)) {
+      throw new Error(`generated playground page must not be wrapped by Fluid theme: ${forbidden}`);
+    }
   }
 }
 
