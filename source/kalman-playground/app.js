@@ -93,6 +93,8 @@ const el = {
   historyList: document.getElementById("historyList"),
   processCanvas: document.getElementById("processCanvas"),
   stepRow: document.getElementById("stepRow"),
+  drawerToggleButton: document.getElementById("drawerToggleButton"),
+  inspectorDrawer: document.getElementById("inspectorDrawer"),
 };
 
 function zeros(rows, cols) {
@@ -432,6 +434,28 @@ function handleCanvasClick(event) {
   render();
 }
 
+function resizeCanvasToDisplaySize() {
+  const canvas = el.processCanvas;
+  const bounds = canvas.parentElement?.getBoundingClientRect?.() || canvas.getBoundingClientRect();
+  const width = Math.max(320, Math.round(bounds.width || canvas.clientWidth || canvas.width || 980));
+  const height = Math.max(280, Math.round(bounds.height || canvas.clientHeight || canvas.height || 560));
+  if (canvas.width === width && canvas.height === height) return false;
+  canvas.width = width;
+  canvas.height = height;
+  return true;
+}
+
+function scheduleRender() {
+  const raf = typeof window.requestAnimationFrame === "function"
+    ? window.requestAnimationFrame.bind(window)
+    : (fn) => fn();
+  raf(render);
+}
+
+function toggleInspectorDrawer() {
+  document.body.classList.toggle("drawer-open");
+}
+
 function toggleAuto() {
   if (app.autoTimer) {
     clearInterval(app.autoTimer);
@@ -624,6 +648,7 @@ function drawCovariance(ctx, canvas, point, P, color) {
 
 function drawProcess() {
   const canvas = el.processCanvas;
+  resizeCanvasToDisplaySize();
   const ctx = canvas.getContext("2d");
   const posterior = stateAsXY(app.phase === "update" && app.history[0] ? app.history[0].x : app.x);
   const predicted = app.predicted ? stateAsXY(app.predicted.x) : null;
@@ -720,6 +745,10 @@ function init() {
     if (event.key === "Enter") useMeasurement();
   });
   el.processCanvas.addEventListener("click", handleCanvasClick);
+  el.drawerToggleButton.addEventListener("click", toggleInspectorDrawer);
+  if (typeof window.addEventListener === "function") {
+    window.addEventListener("resize", scheduleRender);
+  }
   el.predictButton.addEventListener("click", runPredict);
   el.gainButton.addEventListener("click", runGain);
   el.updateButton.addEventListener("click", runUpdate);
@@ -734,6 +763,7 @@ window.KalmanProcessVisualizer = {
   parseMeasurementInput,
   measurementFromXY,
   screenToWorld,
+  resizeCanvasToDisplaySize,
   runPredict,
   runGain,
   runUpdate,

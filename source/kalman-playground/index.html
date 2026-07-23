@@ -7,183 +7,186 @@
     <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
-    <header class="hero">
-      <div>
-        <p class="eyebrow">dynamic kalman lab</p>
-        <h1>Kalman Process Visualizer</h1>
-        <p class="lead">
-          逐步观察 Kalman 滤波的 Predict → Innovation/Gain → Update 过程。
-          输入新的测量值，或直接点击中间坐标画布添加测量点；页面会展示公式、矩阵数值、状态点移动和协方差变化。
-        </p>
-      </div>
-      <div class="hero-card">
-        <div class="metric">
-          <span>当前滤波器</span>
-          <strong id="activeFilterLabel">1D KF</strong>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="back-link" href="/">← WBlog</a>
+        <div class="brand">
+          <p class="eyebrow">dynamic kalman lab</p>
+          <h1>Kalman Process Visualizer</h1>
         </div>
-        <div class="metric">
-          <span>当前步骤</span>
-          <strong id="phaseLabel">Posterior</strong>
-        </div>
-        <div class="metric">
-          <span>Gate</span>
-          <strong id="gateLabel">-</strong>
-        </div>
-      </div>
-    </header>
-
-    <main class="process-layout">
-      <aside class="panel controls">
-        <section>
-          <h2>滤波器模型</h2>
-          <div class="button-grid" id="filterButtons"></div>
-        </section>
-
-        <section>
-          <h2>输入新的测量值</h2>
-          <label class="field">
-            <span id="measurementHint">z = position，例如 4.2</span>
-            <input id="measurementInput" type="text" value="4.2">
-          </label>
-          <button id="addMeasurementButton" class="primary">使用该测量值</button>
-          <p class="hint">
-            1D 输入：<code>4.2</code>；2D 输入：<code>4.2, 1.1</code>；
-            EKF/UKF 输入 range,bearing：<code>4.4, 0.25</code>。
-            也可以直接点击中间画布，页面会自动换算成当前滤波器需要的测量格式。
-          </p>
-        </section>
-
-        <section>
-          <h2>参数</h2>
-          <div id="sliders"></div>
-        </section>
-
-        <section>
-          <h2>过程控制</h2>
-          <div class="button-grid two">
-            <button id="predictButton">Predict</button>
-            <button id="gainButton">Innovation / Gain</button>
-            <button id="updateButton">Update</button>
-            <button id="nextButton">下一步</button>
-            <button id="autoButton">Auto Play</button>
-            <button id="resetButton">Reset</button>
+        <div class="top-metrics">
+          <div class="metric">
+            <span>滤波器</span>
+            <strong id="activeFilterLabel">1D KF</strong>
           </div>
-        </section>
-      </aside>
+          <div class="metric">
+            <span>步骤</span>
+            <strong id="phaseLabel">Posterior</strong>
+          </div>
+          <div class="metric">
+            <span>Gate</span>
+            <strong id="gateLabel">-</strong>
+          </div>
+        </div>
+        <button id="drawerToggleButton" class="drawer-toggle">公式 / 数值</button>
+      </header>
 
-      <section class="stage">
-        <div class="chart-card">
-          <div class="chart-title">
+      <main class="workbench">
+        <aside class="side-panel controls">
+          <section>
+            <h2>滤波器模型</h2>
+            <div class="button-grid" id="filterButtons"></div>
+          </section>
+
+          <section>
+            <h2>输入测量</h2>
+            <label class="field">
+              <span id="measurementHint">z = position，例如 4.2</span>
+              <input id="measurementInput" type="text" value="4.2">
+            </label>
+            <button id="addMeasurementButton" class="primary">使用该测量值</button>
+            <p class="hint">
+              也可以直接点击画布添加测量点。1D 用 x；2D 用 x,y；
+              EKF/UKF 自动换算为 range,bearing。
+            </p>
+          </section>
+
+          <section>
+            <h2>过程控制</h2>
+            <div class="button-grid two">
+              <button id="predictButton">Predict</button>
+              <button id="gainButton">Innovation / Gain</button>
+              <button id="updateButton">Update</button>
+              <button id="nextButton">下一步</button>
+              <button id="autoButton">Auto Play</button>
+              <button id="resetButton">Reset</button>
+            </div>
+          </section>
+
+          <section>
+            <h2>参数</h2>
+            <div id="sliders"></div>
+          </section>
+        </aside>
+
+        <section class="canvas-panel">
+          <div class="canvas-toolbar">
             <div>
               <h2>动态过程画布</h2>
-              <p id="stepExplanation">绿色是当前后验状态，黄色是预测状态，白色是测量，青色是更新后状态；圈表示协方差/不确定性。</p>
+              <p id="stepExplanation">
+                绿色是当前后验状态，黄色是预测状态，白色是测量，青色是更新后状态；圈表示协方差/不确定性。
+              </p>
             </div>
             <div class="legend">
               <span><i class="posterior"></i> 后验 xₖ₋₁</span>
               <span><i class="predict"></i> 预测 x⁻ₖ</span>
               <span><i class="measurement"></i> 测量 zₖ</span>
               <span><i class="update"></i> 更新 xₖ</span>
-              <span><i class="uncertainty"></i> 圈 = 协方差/不确定性</span>
+              <span><i class="uncertainty"></i> 协方差</span>
             </div>
           </div>
-          <canvas id="processCanvas" width="980" height="560"></canvas>
-        </div>
 
-        <div class="timeline panel">
-          <h2>步骤时间线</h2>
+          <div class="canvas-wrap" id="canvasWrap">
+            <canvas id="processCanvas"></canvas>
+          </div>
+
           <div class="step-row" id="stepRow">
             <div class="step-pill" data-step="posterior">0. prior posterior</div>
             <div class="step-pill" data-step="predict">1. predict</div>
             <div class="step-pill" data-step="gain">2. innovation + gain</div>
             <div class="step-pill" data-step="update">3. update</div>
           </div>
-        </div>
+        </section>
+
+        <aside class="inspector-drawer" id="inspectorDrawer">
+          <section>
+            <h2>公式面板</h2>
+            <div id="formulaPanel" class="formula-panel"></div>
+          </section>
+
+          <section>
+            <h2>数值展开</h2>
+            <pre id="numericPanel"></pre>
+          </section>
+
+          <section>
+            <h2>历史更新</h2>
+            <div id="historyList" class="history-list"></div>
+          </section>
+        </aside>
+      </main>
+
+      <section class="quick-docs">
+        <details>
+          <summary>公式和模型说明</summary>
+          <div class="docs-grid">
+            <article>
+              <h3>线性 Kalman 更新公式</h3>
+              <div class="formula-grid">
+                <div>
+                  <h4>Predict</h4>
+                  <code>x⁻ₖ = F xₖ₋₁</code>
+                  <code>P⁻ₖ = F Pₖ₋₁ Fᵀ + Q</code>
+                </div>
+                <div>
+                  <h4>Innovation</h4>
+                  <code>yₖ = zₖ - Hx⁻ₖ</code>
+                  <code>Sₖ = H P⁻ₖ Hᵀ + R</code>
+                </div>
+                <div>
+                  <h4>Gain</h4>
+                  <code>Kₖ = P⁻ₖ Hᵀ Sₖ⁻¹</code>
+                </div>
+                <div>
+                  <h4>Update</h4>
+                  <code>xₖ = x⁻ₖ + Kₖyₖ</code>
+                  <code>Pₖ = (I-KH)P⁻ₖ(I-KH)ᵀ + KRKᵀ</code>
+                </div>
+              </div>
+            </article>
+            <article>
+              <h3>支持的滤波器</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>模型</th>
+                    <th>状态</th>
+                    <th>测量输入</th>
+                    <th>用途</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1D KF</td>
+                    <td>[x, v]</td>
+                    <td>position</td>
+                    <td>最容易看懂预测、增益和更新</td>
+                  </tr>
+                  <tr>
+                    <td>2D CV-KF</td>
+                    <td>[x, y, vx, vy]</td>
+                    <td>x, y</td>
+                    <td>接近常见目标追踪</td>
+                  </tr>
+                  <tr>
+                    <td>EKF</td>
+                    <td>[x, y, vx, vy]</td>
+                    <td>range, bearing</td>
+                    <td>展示非线性观测和 Jacobian</td>
+                  </tr>
+                  <tr>
+                    <td>UKF</td>
+                    <td>[x, y, vx, vy]</td>
+                    <td>range, bearing</td>
+                    <td>展示 sigma points 不用手写 Jacobian</td>
+                  </tr>
+                </tbody>
+              </table>
+            </article>
+          </div>
+        </details>
       </section>
-
-      <aside class="panel inspector">
-        <section>
-          <h2>公式面板</h2>
-          <div id="formulaPanel" class="formula-panel"></div>
-        </section>
-
-        <section>
-          <h2>数值展开</h2>
-          <pre id="numericPanel"></pre>
-        </section>
-
-        <section>
-          <h2>历史更新</h2>
-          <div id="historyList" class="history-list"></div>
-        </section>
-      </aside>
-    </main>
-
-    <section class="docs">
-      <article class="panel">
-        <h2>线性 Kalman 更新公式</h2>
-        <div class="formula-grid">
-          <div>
-            <h3>Predict</h3>
-            <code>x⁻ₖ = F xₖ₋₁</code>
-            <code>P⁻ₖ = F Pₖ₋₁ Fᵀ + Q</code>
-          </div>
-          <div>
-            <h3>Innovation</h3>
-            <code>yₖ = zₖ - Hx⁻ₖ</code>
-            <code>Sₖ = H P⁻ₖ Hᵀ + R</code>
-          </div>
-          <div>
-            <h3>Gain</h3>
-            <code>Kₖ = P⁻ₖ Hᵀ Sₖ⁻¹</code>
-          </div>
-          <div>
-            <h3>Update</h3>
-            <code>xₖ = x⁻ₖ + Kₖyₖ</code>
-            <code>Pₖ = (I-KH)P⁻ₖ(I-KH)ᵀ + KRKᵀ</code>
-          </div>
-        </div>
-      </article>
-
-      <article class="panel">
-        <h2>支持的滤波器</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>模型</th>
-              <th>状态</th>
-              <th>测量输入</th>
-              <th>用途</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1D KF</td>
-              <td>[x, v]</td>
-              <td>position</td>
-              <td>最容易看懂预测、增益和更新</td>
-            </tr>
-            <tr>
-              <td>2D CV-KF</td>
-              <td>[x, y, vx, vy]</td>
-              <td>x, y</td>
-              <td>接近常见目标追踪</td>
-            </tr>
-            <tr>
-              <td>EKF</td>
-              <td>[x, y, vx, vy]</td>
-              <td>range, bearing</td>
-              <td>展示非线性观测和 Jacobian</td>
-            </tr>
-            <tr>
-              <td>UKF</td>
-              <td>[x, y, vx, vy]</td>
-              <td>range, bearing</td>
-              <td>展示 sigma points 不用手写 Jacobian</td>
-            </tr>
-          </tbody>
-        </table>
-      </article>
-    </section>
+    </div>
 
     <script src="./app.js"></script>
   </body>
