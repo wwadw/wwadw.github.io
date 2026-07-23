@@ -19,15 +19,15 @@
   <meta name="author" content="John Doe">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Kalman Playground：用动态过程理解预测、增益和更新Kalman 滤波最容易卡住的地方，通常不是公式本身，而是“预测值、测量值、Kalman Gain、协方差”之间到底怎么互相拉扯。 我做了一个小的交互实验台，可以在浏览器里一步一步观察：  Predict 如何把上一时刻状态推出当前预测状态； Innovation 如何表示“测量值和预测值差了多少”； Kalman Gain 如何决">
+    <meta name="description" content="Kalman Playground：用动态过程理解预测、增益和更新Kalman 滤波最容易卡住的地方，通常不是公式本身，而是“预测值、测量值、Kalman Gain、协方差”之间到底怎么互相拉扯。 我做了一个独立的全屏交互实验台，可以在浏览器里一步一步观察：  Predict 如何把上一时刻状态推出当前预测状态； Innovation 如何表示“测量值和预测值差了多少”； Kalman Gain">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kalman Playground：用动态过程理解预测、增益和更新">
 <meta property="og:url" content="http://example.com/2026/07/23/kalman-playground/index.html">
 <meta property="og:site_name" content="WBlog">
-<meta property="og:description" content="Kalman Playground：用动态过程理解预测、增益和更新Kalman 滤波最容易卡住的地方，通常不是公式本身，而是“预测值、测量值、Kalman Gain、协方差”之间到底怎么互相拉扯。 我做了一个小的交互实验台，可以在浏览器里一步一步观察：  Predict 如何把上一时刻状态推出当前预测状态； Innovation 如何表示“测量值和预测值差了多少”； Kalman Gain 如何决">
+<meta property="og:description" content="Kalman Playground：用动态过程理解预测、增益和更新Kalman 滤波最容易卡住的地方，通常不是公式本身，而是“预测值、测量值、Kalman Gain、协方差”之间到底怎么互相拉扯。 我做了一个独立的全屏交互实验台，可以在浏览器里一步一步观察：  Predict 如何把上一时刻状态推出当前预测状态； Innovation 如何表示“测量值和预测值差了多少”； Kalman Gain">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-07-23T02:30:00.000Z">
-<meta property="article:modified_time" content="2026-07-23T06:36:21.707Z">
+<meta property="article:modified_time" content="2026-07-23T07:07:59.551Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="Kalman">
 <meta property="article:tag" content="可视化">
@@ -250,7 +250,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          948 字
+          1k 字
         
       </span>
     
@@ -261,7 +261,7 @@
         
         
         
-          8 分钟
+          9 分钟
         
       </span>
     
@@ -304,7 +304,7 @@
               <div class="markdown-body">
                 
                 <h1 id="Kalman-Playground：用动态过程理解预测、增益和更新"><a href="#Kalman-Playground：用动态过程理解预测、增益和更新" class="headerlink" title="Kalman Playground：用动态过程理解预测、增益和更新"></a>Kalman Playground：用动态过程理解预测、增益和更新</h1><p>Kalman 滤波最容易卡住的地方，通常不是公式本身，而是“预测值、测量值、Kalman Gain、协方差”之间到底怎么互相拉扯。</p>
-<p>我做了一个小的交互实验台，可以在浏览器里一步一步观察：</p>
+<p>我做了一个独立的全屏交互实验台，可以在浏览器里一步一步观察：</p>
 <ul>
 <li>Predict 如何把上一时刻状态推出当前预测状态；</li>
 <li>Innovation 如何表示“测量值和预测值差了多少”；</li>
@@ -325,7 +325,8 @@
 <p>然后打开：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">http://localhost:4000/kalman-playground/<br></code></pre></td></tr></table></figure>
 
-<h2 id="怎么使用"><a href="#怎么使用" class="headerlink" title="怎么使用"></a>怎么使用</h2><p>页面左侧可以切换滤波器模型：</p>
+<h2 id="怎么使用"><a href="#怎么使用" class="headerlink" title="怎么使用"></a>怎么使用</h2><p>在线页面不是嵌在文章里的小组件，而是单独的实验台界面：中间大画布优先展示动态过程，左侧是控制面板，右上角可以打开 <code>公式 / 数值</code> 抽屉查看矩阵和历史更新。</p>
+<p>页面左侧可以切换滤波器模型：</p>
 <table>
 <thead>
 <tr>
@@ -362,7 +363,7 @@
 </tbody></table>
 <p>每次实验可以按这个顺序走：</p>
 <ol>
-<li>输入一个测量值，或者直接点击中间坐标画布添加点；</li>
+<li>输入一个测量值，或者直接点击中间大坐标画布添加点；</li>
 <li>点 <code>Predict</code>，观察黄色预测点和黄色不确定性圈；</li>
 <li>点 <code>Innovation / Gain</code>，观察白色测量点、红色 residual 箭头和 Kalman Gain；</li>
 <li>点 <code>Update</code>，观察青色更新点如何从预测点被拉向测量点；</li>
@@ -374,7 +375,7 @@
 <p>其中 EKF &#x2F; UKF 的输入是：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">range, bearing(rad)<br></code></pre></td></tr></table></figure>
 
-<p>如果不想手动输入，可以直接点击中间画布。页面会自动把点击坐标转换成当前滤波器需要的测量格式：</p>
+<p>如果不想手动输入，可以直接点击中间大画布。页面会自动把点击坐标转换成当前滤波器需要的测量格式：</p>
 <ul>
 <li><code>1D KF</code>：点击位置的 x 坐标会作为 position；</li>
 <li><code>2D CV-KF</code>：点击点会作为 <code>x, y</code>；</li>
